@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <Authors>YangShubo</Authors>
+    <Company>SWCares</Company>
+    <Copyright>Apache 2</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+  </ItemGroup>
+
+  <ItemGroup>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FileTransferProtocol\FileTransferProtocol.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+  </ItemGroup>
+
+</Project>
