@@ -1,11 +1,13 @@
-﻿using System;
+﻿using FileTransferProtocol;
+using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace FileTransferServer
+namespace FileTransferLib
 {
-    class Utils
+    public class Utils
     {
         static public String MD5Block(byte[] buffer)
         {
@@ -25,6 +27,11 @@ namespace FileTransferServer
         static public byte[] MD5BlockBytes(byte[] buffer)
         {
             return MD5.Create().ComputeHash(buffer);
+        }
+
+        static public byte[] MD5BlockBytes(string data)
+        {
+            return MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(data));
         }
     }
 }

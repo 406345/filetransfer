@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -9,10 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="config.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="config.json" />
+    <Content Include="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -21,11 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FileTransferProtocol\FileTransferProtocol.csproj" />
+    <ProjectReference Include="..\FileTransferLib\FileTransferLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="config.json" />
     <Resource Include="FileReceiver.cs" />
   </ItemGroup>
 

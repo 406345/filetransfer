@@ -1,4 +1,5 @@
-﻿using FileTransferProtocol;
+﻿using FileTransferLib;
+using FileTransferProtocol;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -35,6 +36,8 @@ namespace FileTransfer
 
             socket.Connect(new IPEndPoint(IPAddress.Parse(config.remote), config.port));
 
+            SocketEx sck = new SocketEx(socket);
+
             FileMeta meta = new FileMeta();
             meta.version = 1;
             meta.blockSize = BLOCK_SIZE;
@@ -43,7 +46,8 @@ namespace FileTransfer
             meta.fileSize = (ulong)fi.Length;
             meta.hash = MD5Block(Guid.NewGuid().ToByteArray());
 
-            SendMessage(socket, meta);
+            sck.SendMessage(meta);
+            //SendMessage(socket, meta);
 
             var fs = System.IO.File.OpenRead(filename);
             byte[] buffer = new byte[BLOCK_SIZE];
@@ -59,9 +63,8 @@ namespace FileTransfer
                 fd.buffer = buffer;
                 fd.hash = MD5Block(fd.buffer);
 
-                SendMessage(socket, fd);
+                sck.SendMessage(fd);
                 LogProgress((int)i, (int)meta.fileBlockCount);
-                //Console.Write(fd.blockId + "/" + meta.fileBlockCount + "(" + (1 + fd.blockId) * 100 / meta.fileBlockCount + "%)\r");
             }
 
             Console.WriteLine();
@@ -87,14 +90,6 @@ namespace FileTransfer
             var hashBytes = md5.ComputeHash(buffer);
             return hashBytes;
 
-        }
-
-        static void SendMessage(Socket socket, BaseMessage msg)
-        {
-            var bytes = msg.ToBytes();
-            var lengthArr = BitConverter.GetBytes((uint)bytes.Length);
-            socket.Send(lengthArr);
-            socket.Send(bytes);
         }
 
         static void LogProgress(int cur, int total)

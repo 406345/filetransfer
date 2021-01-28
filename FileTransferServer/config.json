@@ -1,5 +1,4 @@
 {
-    "remote": "127.0.0.1",
-    "port": 4444,
-    "password": "token"
+    "output": "/home/admin/文档",
+    "port" :  4444
 }

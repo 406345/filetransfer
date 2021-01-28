@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FileTransferProtocol
+namespace FileTransferLib
 {
     public class CircleBuffer
     {
@@ -147,6 +147,13 @@ namespace FileTransferProtocol
 
         // 2,4,8 bytes 
         byte[] convertBuffer = new byte[8];
+        public ushort ReadByte()
+        {
+            const int size = 1;
+            this.ReadBuffer(convertBuffer, 0, size);
+            return convertBuffer[0];
+        }
+
         public ushort ReadUInt16()
         {
             const int size = 2;
