@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using FileTransferProtocol;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -17,6 +18,14 @@ namespace FileTransferClientWPF
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            var t = new FileResult()
+            {
+                Code = 0,
+                Message = "OK",
+            };
+
+            t.ToBytes();
+
             var args = Environment.GetCommandLineArgs();
 
             if( args.Length == 1)

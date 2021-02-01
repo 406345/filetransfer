@@ -13,7 +13,8 @@ namespace FileTransferProtocol
 
         public override void Parse(CircleBuffer buffer, int offset, int length)
         {
-            this.Code = buffer.ReadByte();
+            this.Code = buffer.ReadUInt16();
+            this.Message = buffer.ReadString();
         }
 
         public override byte[] ToBytes()

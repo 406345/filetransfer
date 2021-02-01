@@ -33,11 +33,10 @@ namespace FileTransferClientWPF
             public string Path { get; set; }
         }
 
-        private const int BLOCK_SIZE = 1024 * 1; // 1M
+        private const int BLOCK_SIZE = 1024 * 1024; // 1M
 
         string[] args;
         Config config;
-        bool canExit = false;
         List<FileInfo> filesToSend = new List<FileInfo>();
         Thread sendThread;
         public MainWindow()
@@ -150,6 +149,7 @@ namespace FileTransferClientWPF
                     meta.fileSize = (ulong)fi.Length;
                     meta.hash = FileTransferLib.Utils.MD5BlockBytes(this.config.password + "|" + meta.fileName);
                     int sent = socket.SendMessage(meta);
+
                     var metaFlag = socket.ReadMessage<FileResult>(new FileResult());
 
                     if (metaFlag == null)
@@ -184,14 +184,7 @@ namespace FileTransferClientWPF
                             break;
                         }
                     }
-
-                    var result = socket.ReadMessage<FileResult>(new FileResult());
-
-                    if(result == null)
-                    {
-                        continue;
-                    }
-
+                     
                     return;
                 }
                 catch (Exception e)

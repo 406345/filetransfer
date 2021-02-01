@@ -36,6 +36,7 @@ namespace FileTransferLib
                 var lengthArr = BitConverter.GetBytes((uint)bytes.Length);
                 var count = this.socket.Send(lengthArr);
                 count += this.socket.Send(msg.ToBytes());
+
                 return count;
             }
             catch (Exception ex)
@@ -56,21 +57,23 @@ namespace FileTransferLib
 
                 try
                 {
-                    recvNum = this.socket.Receive(recvBuffer, 0, recvBuffer.Length, SocketFlags.None);
+                    if (this.socket.Available > 0)
+                    {
+                        recvNum = this.socket.Receive(recvBuffer, 0, recvBuffer.Length, SocketFlags.None);
+                        buffer.WriteBuffer(recvBuffer, 0, recvNum);
+                    }
                 }
                 catch (Exception ex)
                 {
                     return null;
                 }
 
-                if (recvNum == 0)
+                if (recvNum == 0 && buffer.Length() == 0 )
                 {
                     Thread.Sleep(100);
                     continue;
                 }
                 
-                buffer.WriteBuffer(recvBuffer, 0, recvNum);
-
                 while (true)
                 {
                     if (state == 0)
@@ -78,7 +81,6 @@ namespace FileTransferLib
                         if (buffer.Length() >= 4)
                         {
                             msgLength = buffer.ReadUInt32();
-
                             if (msgLength > MAX_MESSAGE_SIZE)
                                 return null;
 

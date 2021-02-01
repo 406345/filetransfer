@@ -176,7 +176,7 @@ namespace FileTransferLib
 
         public String ReadString()
         {
-            int size = this.ReadBuffer(1)[0];
+            int size = this.ReadByte();
             return Encoding.UTF8.GetString(this.ReadBuffer(size));
         }
     }

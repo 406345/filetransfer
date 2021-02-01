@@ -64,8 +64,10 @@ namespace FileTransferServer
             string outputDir = Path.GetDirectoryName(filePath);
             System.IO.Directory.CreateDirectory(outputDir);
 
+            if (System.IO.File.Exists(filePath))
+                System.IO.File.Delete(filePath);
 
-            var file = System.IO.File.OpenWrite(filePath);
+            var file = System.IO.File.Open(filePath, FileMode.OpenOrCreate);
             int recvBlockNum = 0;
 
             var block = new FileData();
@@ -78,9 +80,7 @@ namespace FileTransferServer
 
             while (recvBlockNum < (int)meta.fileBlockCount)
             {
-
                 var body = this.socket.ReadMessage<FileData>(block);
-
 
                 if ( body == null)
                 {
