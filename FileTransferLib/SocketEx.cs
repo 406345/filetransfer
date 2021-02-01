@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 namespace FileTransferLib
 {
@@ -29,11 +30,18 @@ namespace FileTransferLib
 
         public int SendMessage(BaseMessage msg)
         {
-            var bytes = msg.ToBytes();
-            var lengthArr = BitConverter.GetBytes((uint)bytes.Length);
-            var count = this.socket.Send(lengthArr);
-            count += this.socket.Send(msg.ToBytes());
-            return count;
+            try
+            {
+                var bytes = msg.ToBytes();
+                var lengthArr = BitConverter.GetBytes((uint)bytes.Length);
+                var count = this.socket.Send(lengthArr);
+                count += this.socket.Send(msg.ToBytes());
+                return count;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
         }
 
         public T ReadMessage<T>(T instance) where T : BaseMessage
@@ -44,7 +52,23 @@ namespace FileTransferLib
 
             while (true)
             {
-                int recvNum = this.socket.Receive(recvBuffer, 0, recvBuffer.Length, SocketFlags.None);
+                int recvNum = 0;
+
+                try
+                {
+                    recvNum = this.socket.Receive(recvBuffer, 0, recvBuffer.Length, SocketFlags.None);
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+
+                if (recvNum == 0)
+                {
+                    Thread.Sleep(100);
+                    continue;
+                }
+                
                 buffer.WriteBuffer(recvBuffer, 0, recvNum);
 
                 while (true)

@@ -58,12 +58,20 @@ namespace FileTransferClientWPF
         {
             this.RequestAdministratorAccess();
 
-            Registry.ClassesRoot.DeleteSubKeyTree("*\\shell\\Send To Remote");
+            try
+            {
+                Registry.ClassesRoot.DeleteSubKeyTree("*\\shell\\Send To Remote");
+                Registry.ClassesRoot.DeleteSubKeyTree("Directory\\shell\\Send To Remote");
+            }
+            catch
+            {
+
+            }
+             
             var rsg = Registry.ClassesRoot.CreateSubKey("*\\shell\\Send To Remote\\command", true); //true表可以修改
             rsg.SetValue(null, Environment.GetCommandLineArgs()[0] + " \"%1\"", RegistryValueKind.String);
             rsg.Close();
 
-            Registry.ClassesRoot.DeleteSubKeyTree("Directory\\shell\\Send To Remote");
             rsg = Registry.ClassesRoot.CreateSubKey("Directory\\shell\\Send To Remote\\command", true); //true表可以修改
             rsg.SetValue(null, Environment.GetCommandLineArgs()[0] + " \"%1\"", RegistryValueKind.String);
             rsg.Close();

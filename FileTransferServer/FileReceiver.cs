@@ -29,21 +29,17 @@ namespace FileTransferServer
             
             while (true)
             {
-
                 var client = server.Accept();
                 new Thread((Object obj) =>
                 {
-                    Task.Run(() =>
+                    try
                     {
-                        try
-                        {
-                            new FileReceiver(new SocketEx((Socket)obj)).receive();
-                        }
-                        catch (Exception ex)
-                        {
+                        new FileReceiver(new SocketEx((Socket)obj)).receive();
+                    }
+                    catch (Exception ex)
+                    {
 
-                        }
-                    }).Wait();
+                    }
                 }).Start(client);
             }
         }
@@ -53,34 +49,66 @@ namespace FileTransferServer
             this.socket = socket;
         }
 
-        public async void receive()
+        public void receive()
         {
             var meta = this.socket.ReadMessage<FileMeta>(new FileMeta());
-           
-            Console.WriteLine("[{0}] send {1}", socket.RemoteIP, meta.fileName);
 
-            string filePath = Path.Combine(config.output, meta.fileName);
+            if ( meta == null)
+            {
+                return;
+            }
+
+            string filePath = Path.Combine(config.output, meta.fileName)
+                .Replace('/', Path.DirectorySeparatorChar)
+                .Replace('\\', Path.DirectorySeparatorChar);
             string outputDir = Path.GetDirectoryName(filePath);
             System.IO.Directory.CreateDirectory(outputDir);
+
 
             var file = System.IO.File.OpenWrite(filePath);
             int recvBlockNum = 0;
 
             var block = new FileData();
-            while (recvBlockNum < (int)meta.fileBlockCount)
-            {
-                var body = this.socket.ReadMessage<FileData>(block);
-                ++recvBlockNum;
-                //file.Seek(body.blockId * meta.blockSize, System.IO.SeekOrigin.Begin);
-                await file.WriteAsync(body.buffer, 0, (int)body.blockSize);
-            }
 
-            file.Close();
             this.socket.SendMessage(new FileResult()
             {
                 Code = 0,
                 Message = "OK",
             });
+
+            while (recvBlockNum < (int)meta.fileBlockCount)
+            {
+
+                var body = this.socket.ReadMessage<FileData>(block);
+
+
+                if ( body == null)
+                {
+                    return;
+                }
+
+                ++recvBlockNum;
+                //file.Seek(body.blockId * meta.blockSize, System.IO.SeekOrigin.Begin);
+                file.Write(body.buffer, 0, (int)body.blockSize);
+
+                this.socket.SendMessage(new FileResult()
+                {
+                    Code = 0,
+                    Message = "OK",
+                });
+
+            }
+
+            file.Flush();
+            file.Close();
+            
+            Console.WriteLine("[{0}] send {1} save to {2}", socket.RemoteIP, meta.fileName, filePath);
+            
+            //this.socket.SendMessage(new FileResult()
+            //{
+            //    Code = 0,
+            //    Message = "OK",
+            //});
         }
     }
 }

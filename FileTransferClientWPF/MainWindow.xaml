@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileTransferClientWPF"
-        mc:Ignorable="d" Height="32.12" Width="360.873" MouseDown="Grid_MouseDown" Loaded="Window_Loaded" Closed="Window_Closed" ShowInTaskbar="False" WindowStyle="None" ResizeMode="NoResize">
+        mc:Ignorable="d" Height="32.12" Width="360.873" MouseDown="Grid_MouseDown" Loaded="Window_Loaded" Closed="Window_Closed" ShowInTaskbar="False" WindowStyle="None" ResizeMode="NoResize" Topmost="True">
     <Grid>
         <ProgressBar x:Name="pbProgress" Value="50" Minimum="0" Foreground="#FF398901" IsIndeterminate="True"/>
         <Label x:Name="lbFileName" Content="Label" VerticalContentAlignment="Center"/>
